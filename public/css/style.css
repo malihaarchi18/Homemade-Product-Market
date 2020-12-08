@@ -1,0 +1,147 @@
+
+
+
+
+
+.margin-top-20{
+	margin-top:20px;
+}
+
+.feature-img{
+	height: 200px;
+  width:100px;
+}
+
+
+
+.product-item{
+	background: #dcf4fc;
+}
+
+
+.shop{
+	text-align: center;
+}
+
+.hideme {
+  display: none;
+}
+
+.woo {
+  cursor: pointer;
+}
+
+.hideme + .woo:before {
+  width: 10px;
+  height: 10px;
+  border: 2px solid gray;
+  border-radius: 2px;
+  box-shadow: -1px 1px 2px 2px rgba(0,0,0,0.2);
+ .hideme {
+  display: none;
+}
+
+.woo {
+  cursor: pointer;
+}
+
+.hideme + .woo:before {
+  width: 10px;
+  height: 10px;
+  border: 2px solid gray;
+  border-radius: 2px;
+  box-shadow: -1px 1px 2px 2px rgba(0,0,0,0.2);
+  background: green;
+  position: relative;
+  display: inline-block;
+  margin-right: 1ex;
+  content: "";
+}
+
+.hideme:checked + .woo:before {
+  background: green;
+}
+  position: relative;
+  display: inline-block;
+  margin-right: 1ex;
+  content: "";
+}
+
+.hideme:checked + .woo:before {
+  background: green;
+}
+
+.card{
+  height:380px;
+  
+}
+
+.card-body{
+  height:200px;
+}
+
+
+.head{
+  position:absolute;
+  left:1100px;
+  z-index: 1;
+}
+
+.head2{
+  position:absolute;
+  left:1160px;
+  z-index: 1;
+}
+
+.new-body{
+  height:300px;
+  width:1000px;
+}
+.new{
+  height:1000px;
+  width:2000px;
+  margin-left: 280px;
+  margin-top:70px;
+ }
+ 
+
+.reg-body{
+  height:800px;
+  width:1000px;
+}
+
+.reg{
+  margin-left: 0px;
+  margin-top:50px;
+}
+
+.w3-btn{
+height:30px;
+width:100px;
+margin-left: 165px;
+background-color: black;
+color:white;
+font:bold 15px arial,sans-serif;
+border-style:outset;
+}
+
+.w4-btn{
+height:30px;
+width:100px;
+margin-left: 30px;
+background-color: black;
+color:white;
+font:bold 15px arial,sans-serif;
+border-style:outset;
+}
+
+.h{
+  margin-left:300px;
+}
+
+.f{
+  margin-top:300px;
+  font-size:18px;
+  font-style:oblique;
+  
+}
