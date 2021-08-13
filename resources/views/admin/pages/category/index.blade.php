@@ -23,7 +23,7 @@
              <b>   Manage Category </b>
               </div>
               <div class="card-body">
-            <table class="table table-hover">
+            <table class="table table-hover table-striped">
               <tr>
                 <td><b>#<b></td>
                 <td> <b>Category Title </b> </td>

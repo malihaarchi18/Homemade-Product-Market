@@ -14,7 +14,7 @@ class AddOrderIdColumnToCarts extends Migration
     public function up()
     {
         Schema::table('carts', function (Blueprint $table) {
-          $table->string('order_id')->after('user_ip');
+          $table->string('user_id')->after('user_ip');
         });
     }
 
@@ -26,7 +26,7 @@ class AddOrderIdColumnToCarts extends Migration
     public function down()
     {
         Schema::table('carts', function (Blueprint $table) {
-               $table->dropColumn('order_id');
+               $table->dropColumn('user_id');
         });
     }
 }

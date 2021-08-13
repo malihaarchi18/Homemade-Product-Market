@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class IsCompletedToOrdersTable extends Migration
+class CreateWishlistsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class IsCompletedToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
-             $table->string('is_completed')->after('seen_by_admin');
+        Schema::create('wishlists', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('product_id');
+            $table->string('user_id');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ class IsCompletedToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
-             $table->dropColumn('is_completed');
-        });
+        Schema::dropIfExists('wishlists');
     }
 }

@@ -14,10 +14,10 @@ class CartController extends Controller
 {
     public function addToCart(Request $request,$product_id,$stock){
     
-    $check= Cart::where('product_id',$product_id)->where('user_ip',request()->ip())->first();
+    $check= Cart::where('product_id',$product_id)->where('user_id',Auth::id())->where('user_ip',request()->ip())->first();
     if ($check)
     {
-    Cart::where('product_id',$product_id)->where('user_ip',request()->ip())->increment('quantity');
+    Cart::where('product_id',$product_id)->where('user_id',Auth::id())->where('user_ip',request()->ip())->increment('quantity');
       return redirect()->back()->with('cart','Product added on cart');
     }
 
@@ -30,6 +30,7 @@ class CartController extends Controller
                'user_ip'=> request()->ip(),
                'user_id'=> Auth::id(),
                'stock'=> $stock,
+               'sale'=> $request->salep,
  ]);
 
 
@@ -41,8 +42,8 @@ class CartController extends Controller
 }
 
 public function cartpage(){
-  $carts=Cart::where('user_ip',request()->ip())->latest()->get();
-  $total=Cart::all()->where('user_ip',request()->ip())->sum(function($t){
+  $carts=Cart::where('user_ip',request()->ip())->where('user_id',Auth::id())->latest()->get();
+  $total=Cart::all()->where('user_ip',request()->ip())->where('user_id',Auth::id())->sum(function($t){
     return $t->price*$t->quantity;
   });
   return view('pages.cart',compact('carts','total'));
@@ -51,19 +52,20 @@ public function cartpage(){
 
 public function remove($cart_id)
 {
-  Cart::where('id',$cart_id)->where('user_ip',request()->ip())->delete();
+  Cart::where('id',$cart_id)->where('user_ip',request()->ip())->where('user_id',Auth::id())->delete();
   return redirect()->back()->with('cart_dlt','Product removed from cart');;
 }
 
 
   public function quantityupdate(Request $request, $cart_id){
 
-$x=Cart::where('id',$cart_id)->where('stock','>=',$request->product_quantity)->where('user_ip',request()->ip())->first();
-$y=Cart::where('id',$cart_id)->where('stock','<',$request->product_quantity)->where('user_ip',request()->ip());
+$x=Cart::where('id',$cart_id)->where('stock','>=',$request->product_quantity)->where('user_id',Auth::id())->where('user_ip',request()->ip())->first();
+
+$y=Cart::where('id',$cart_id)->where('stock','<',$request->product_quantity)->where('user_id',Auth::id())->where('user_ip',request()->ip());
 
 if($x)
 {
-Cart::where('id',$cart_id)->where('stock','>=',$request->product_quantity)->where('user_ip',request()->ip())->update([
+Cart::where('id',$cart_id)->where('stock','>=',$request->product_quantity)->where('user_id',Auth::id())->where('user_ip',request()->ip())->update([
      'quantity'=>$request->product_quantity,]);
 return redirect()->back()->with('cart_update','Quantity Updated');;
 }

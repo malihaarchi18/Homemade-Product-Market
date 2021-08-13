@@ -7,14 +7,11 @@
 </head>
 <body>
 
-	<div class="wrapper">
+<div class="wrapper">
 @include('layouts.partial.nav')
 @yield('content')
+</div>
 
-
-
-		
-	</div>
 @include('layouts.partial.script')
 
 	</body>

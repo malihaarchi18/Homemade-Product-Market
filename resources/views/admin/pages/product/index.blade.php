@@ -5,7 +5,7 @@
 
 
 <div class="main-panel">
-          <div class="content-wrapper">
+        
 
             <div class="card">
               <div class="card-header">
@@ -23,7 +23,8 @@
              <b>   Manage Product </b>
               </div>
               <div class="card-body">
-            <table class="table table-hover table-striped" id="dataTable">
+          
+            <table class="table table-hover table-striped">
               <thead>
               <tr>
                 <td><b> Product Id <b> </td>
@@ -35,8 +36,10 @@
                 <td> <b> Quantity </b> </td>
                 <td> <b> Edit </b> </td>
                 <td> <b> Delete </b> </td>
+                
               </tr>
             </thead>
+            <div class="n">
               @foreach($products as $product)
               <tr>
                 <td>{{ $product->id }}</td>
@@ -57,33 +60,25 @@
                 <td>
 
                  <a href="{{ route('admin.product.delete',$product->id)}}" class="btn btn-danger">Delete</a>
-
-               
-              
+                  </td>
                  
-              </td>
               </tr>
-          
+          @endforeach
+           {{ $products->links()}}
+         </div>
+         </table>
+         </div>
 
 
-              @endforeach
-               <tfoot>
-              <tr>
-                <td><b> Product Id <b> </td>
-                <td> <b> Product Title </b> </td>
-                <td> <b> Product Image </b> </td>
-                <td> <b> Category Name </b> </td>
-                <td> <b> Shop Name </b> </td>
-                <td> <b> Price </b> </td> 
-                <td> <b> Quantity </b> </td>
-                <td> <b> Edit </b> </td>
-                <td> <b> Delete </b> </td>
-              </tr>
-            </tfoot>
-            </table>
-            </div>
-            </div>
-        </div>
+            
+
+            
+</div>
+     
         </div>
 
         @endsection
+
+
+
+       

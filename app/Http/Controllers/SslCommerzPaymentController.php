@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\Cart;
+use App\Order;
+use App\OrderDetails;
+use App\Product;
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use App\Library\SslCommerz\SslCommerzNotification;
 
 class SslCommerzPaymentController extends Controller
@@ -12,21 +17,18 @@ class SslCommerzPaymentController extends Controller
 
     public function exampleEasyCheckout()
     {   
-         $carts=Cart::where('user_ip',request()->ip())->latest()->get();
-  $total=Cart::all()->where('user_ip',request()->ip())->sum(function($t){
+ $carts=Cart::where('user_ip',request()->ip())->where('user_id',Auth::id())->latest()->get();
+
+ $total=Cart::all()->where('user_ip',request()->ip())->where('user_id',Auth::id())->sum(function($t){
     return $t->price*$t->quantity;
   });
 
         return view('exampleEasycheckout',compact('carts','total'));
     }
 
-    public function exampleHostedCheckout()
-    {
-        return view('exampleHosted');
-    }
-
    
-    public function payViaAjax(Request $request)
+   
+   public function payViaAjax(Request $request)
     {
 
         # Here you have to receive all the order data to initate the payment.
@@ -35,7 +37,10 @@ class SslCommerzPaymentController extends Controller
         
         $requestData= (array) json_decode($request->cart_json);
         $post_data = array();
-        $post_data['total_amount'] = $requestData['amount']; # You cant not pay less than 10
+        $post_data['total_amount'] = $requestData['amount'];
+         $post_data['delivery_charge'] = $requestData['delivery'];
+        // $post_data['coupon_discount'] = $requestData['discount']; # You cant not pay less than 10
+        $post_data['user_id']=Auth::id();
         $post_data['currency'] = "BDT";
         $post_data['tran_id'] = uniqid(); // tran_id must be unique
 
@@ -50,7 +55,6 @@ class SslCommerzPaymentController extends Controller
         $post_data['cus_country'] = "Bangladesh";
         $post_data['cus_phone'] = $requestData['cus_phone'];
         $post_data['cus_fax'] = "";
-
         # SHIPMENT INFORMATION
         $post_data['ship_name'] = "Store Test";
         $post_data['ship_add1'] = "Dhaka";
@@ -78,15 +82,15 @@ class SslCommerzPaymentController extends Controller
             ->where('transaction_id', $post_data['tran_id'])
             ->updateOrInsert([
                 'name' => $post_data['cus_name'],
+                'user_id'=>$post_data['user_id'],
                 'email' => $post_data['cus_email'],
                 'phone' => $post_data['cus_phone'],
                 'amount' => $post_data['total_amount'],
+                'delivery' => $post_data['delivery_charge'],
                 'status' => 'Pending',
                 'address' => $post_data['cus_add1'],
                 'transaction_id' => $post_data['tran_id'],
-                'currency' => $post_data['currency'],
-                'seen_by_admin'=>'NO',
-                'is_completed' => 'NO'
+                'currency' => $post_data['currency']
             ]);
 
         $sslc = new SslCommerzNotification();
@@ -102,8 +106,7 @@ class SslCommerzPaymentController extends Controller
 
     public function success(Request $request)
     {
-        echo "Transaction is Successful";
-
+        
         $tran_id = $request->input('tran_id');
         $amount = $request->input('amount');
         $currency = $request->input('currency');
@@ -127,26 +130,28 @@ class SslCommerzPaymentController extends Controller
                 $update_product = DB::table('orders')
                     ->where('transaction_id', $tran_id)
                     ->update(['status' => 'Processing']);
+           
+    return redirect()->route('transaction.complete')->with('a','Transacton is succesfully completed');
+                
 
-                echo "<br >Transaction is successfully Completed";
             } else {
                 /*
-                That means IPN did not work or IPN URL was not set in your merchant panel and Transation validation failed.
+                That means IPN did not work or IPN URL was not set in your merchant panel and Transaction validation failed.
                 Here you need to update order status as Failed in order table.
                 */
                 $update_product = DB::table('orders')
                     ->where('transaction_id', $tran_id)
                     ->update(['status' => 'Failed']);
-                echo "validation Fail";
+                return redirect()->route('transaction.failed')->with('b','Validation fail');
             }
         } else if ($order_detials->status == 'Processing' || $order_detials->status == 'Complete') {
             /*
              That means through IPN Order status already updated. Now you can just show the customer that transaction is completed. No need to udate database.
              */
-            echo "Transaction is successfully Completed";
+           return redirect()->route('transaction.complete')->with('a','Transacton is succesfully completed');
         } else {
             #That means something wrong happened. You can redirect customer to your product page.
-            echo "Invalid Transaction";
+             return redirect()->route('transaction.failed')->with('c','Invalid transaction');
         }
 
 
@@ -164,12 +169,14 @@ class SslCommerzPaymentController extends Controller
             $update_product = DB::table('orders')
                 ->where('transaction_id', $tran_id)
                 ->update(['status' => 'Failed']);
-            echo "Transaction is Falied";
+             return redirect()->route('transaction.failed')->with('d','Transaction is failed');
         } else if ($order_detials->status == 'Processing' || $order_detials->status == 'Complete') {
-            echo "Transaction is already Successful";
+             return redirect()->route('transaction.complete')->with('e','Transaction is already successful');
         } else {
-            echo "Transaction is Invalid";
+            return redirect()->route('transaction.failed')->with('c','Invalid transaction');
         }
+
+
 
     }
 
@@ -185,20 +192,20 @@ class SslCommerzPaymentController extends Controller
             $update_product = DB::table('orders')
                 ->where('transaction_id', $tran_id)
                 ->update(['status' => 'Canceled']);
-            echo "Transaction is Cancel";
+            return redirect()->route('transaction.failed')->with('f','Transaction is cancel');
         } else if ($order_detials->status == 'Processing' || $order_detials->status == 'Complete') {
-            echo "Transaction is already Successful";
+return redirect()->route('transaction.complete')->with('e','Transaction is already successful');
         } else {
-            echo "Transaction is Invalid";
+           return redirect()->route('transaction.failed')->with('c','Invalid transaction');
         }
 
 
     }
 
-    public function ipn(Request $request)
+    public function ipn(Request $request,$cart_id)
     {
         #Received all the payement information from the gateway
-        if ($request->input('tran_id')) #Check transation id is posted or not.
+        if ($request->input('tran_id')) #Check Transaction id is posted or not.
         {
 
             $tran_id = $request->input('tran_id');
@@ -220,33 +227,81 @@ class SslCommerzPaymentController extends Controller
                     $update_product = DB::table('orders')
                         ->where('transaction_id', $tran_id)
                         ->update(['status' => 'Processing']);
+                     
+ return redirect()->route('transaction.complete')->with('a','Transacton is succesfully completed');
 
-                    echo "Transaction is successfully Completed";
                 } else {
                     /*
-                    That means IPN worked, but Transation validation failed.
+                    That means IPN worked, but Transaction validation failed.
                     Here you need to update order status as Failed in order table.
                     */
                     $update_product = DB::table('orders')
                         ->where('transaction_id', $tran_id)
                         ->update(['status' => 'Failed']);
 
-                    echo "validation Fail";
+      return redirect()->route('transaction.failed')->with('b','Validation fail');
                 }
 
             } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
 
                 #That means Order status already updated. No need to udate database.
 
-                echo "Transaction is already successfully Completed";
+return redirect()->route('transaction.complete')->with('e','Transaction is already successful');
             } else {
                 #That means something wrong happened. You can redirect customer to your product page.
-
-                echo "Invalid Transaction";
+    return redirect()->route('transaction.failed')->with('c','Invalid transaction');
             }
         } else {
-            echo "Invalid Data";
+   return redirect()->route('transaction.failed')->with('g','Invalid data');
         }
+       
+    }
+
+
+    public function complete(Request $request)
+    {  
+       //
+        
+       $carts=Cart::where('user_id',Auth::id())->latest()->get();
+       $o=Order::where('user_id',Auth::id())->orderBy('id','desc')->first();
+      
+      
+         foreach($carts as $cart)
+        OrderDetails::insert([
+          'order_no' => $o->id,
+          'user_id' => Auth::id(),
+          'product_id' => $cart->product_id ,
+        'quantity' => $cart->quantity,
+        'price' => $cart->price,
+        'sale' => $cart->sale,
+    
+           
+
+
+       
+
+
+       ]);
+     
+     foreach($carts as $cart){
+    $update_product = DB::table('products')
+                        ->where('id', $cart->product_id)
+                        ->update(['quantity' => $cart->product->quantity - $cart->quantity]);
+                    }
+        
+        Db::table('carts')->where('user_id',Auth::id())->delete();
+        return view('Transaction.success');
+
+
+     
+
+       
+    }
+
+    public function failed()
+    {  
+      
+       return view('Transaction.fail');
     }
 
 }

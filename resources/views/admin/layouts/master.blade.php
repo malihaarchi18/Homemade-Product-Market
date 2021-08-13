@@ -17,7 +17,7 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{asset('public/css/admin_style2.css')}}">
-    <link rel="stylesheet" href="{{asset('public/css/datatables.min.css')}}">
+    
     <!-- endinject -->
     <!-- Layout styles -->
      <link rel="stylesheet" href="{{asset('public/css/admin_style.css')}}">
@@ -96,6 +96,7 @@
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="{{ route('admin.products')}}">Manage Product </a></li>
          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.product.create')}}">Create Product</a></li>  
+          <li class="nav-item"> <a class="nav-link" href="{{ route('admin.product.sale')}}">Add Sale</a></li> 
           </ul>
             </div>
           </li>
@@ -112,16 +113,7 @@
           </li>
 
 
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#category-pages" aria-expanded="false" aria-controls="general-pages"> <img class="menu-icon" src="images/menu_icons/08.png" alt="menu icon"> <span class="menu-title">Category</span><i class="menu-arrow"></i></a>
-            <div class="collapse" id="category-pages">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="{{ route('admin.categories')}}">Manage Category </a></li>
-         <li class="nav-item"> <a class="nav-link" href="{{ route('admin.category.create')}}">Create Category</a></li>  
-          </ul>
-            </div>
-          </li>
-
+         
 
 
           <li class="nav-item">
@@ -133,6 +125,36 @@
           </ul>
             </div>
           </li>
+
+           <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#refund-pages" aria-expanded="false" aria-controls="refund-pages"> <img class="menu-icon" src="images/menu_icons/08.png" alt="menu icon"> <span class="menu-title">Refund</span><i class="menu-arrow"></i></a>
+            <div class="collapse" id="refund-pages">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ route('refund')}}"> Request for Refund </a></li>
+                 <li class="nav-item"> <a class="nav-link" href="{{ route('query.refund')}}"> Query Refund </a></li>
+        
+          </ul>
+            </div>
+          </li>
+
+
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#feedback-pages" aria-expanded="false" aria-controls="feedback-pages"> <img class="menu-icon" src="images/menu_icons/08.png" alt="menu icon"> <span class="menu-title">Feedback</span><i class="menu-arrow"></i></a>
+            <div class="collapse" id="feedback-pages">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ route('customer.feedback')}}"> View Message </a></li>
+        
+          </ul>
+            </div>
+          </li>
+
+
+         
+
+
+
+        
 
 
 
@@ -166,20 +188,17 @@
 
 <script src="{{ asset('public/js/bootstrap.min.js')}}"> </script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-<script src="{{ asset('public/js/datatables.min.js')}}"></script>
 
-<script>
-$(document).ready(function() {
-    $('#dataTable').DataTable();
-} );
 
-</script>
+
+
     <!-- endinject -->
     <!-- Plugin js for this page-->
     <!-- End plugin js for this page-->
     <!-- inject:js -->
     <script src="assets/js/shared/off-canvas.js"></script>
     <script src="assets/js/shared/misc.js"></script>
+    
     <!-- endinject -->
     <!-- Custom js for this page-->
     <script src="assets/js/demo_1/dashboard.js"></script>

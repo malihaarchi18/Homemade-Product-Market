@@ -28,11 +28,17 @@
                 <td><b> Coupon Name <b> </td>
                 <td> <b> Coupon Code </b> </td>
                 <td> <b> Discount </b> </td>
-                <td> <b> Status </b> </td>
-                <td> <b> Edit </b> </td>
-                <td> <b> Delete </b> </td>
+                </tr>
+              </thead>
+              @foreach($coupons as $coupon)
+              <tr>
+                <td>{{ $coupon->coupon_name }}</td>
+                <td>{{ $coupon->coupon_code}}</td>
+                <td>{{ $coupon->discount }} </td>
+                
               </tr>
-             
+          @endforeach
+          
             </table>
             </div>
             </div>

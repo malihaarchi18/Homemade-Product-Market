@@ -274,7 +274,7 @@ sup {
   top: -.5em; }
 
 a {
-  color: #007bff;
+  color: #212529;
   text-decoration: none;
   background-color: transparent; }
   a:hover {
@@ -359,6 +359,11 @@ select {
 
 select {
   word-wrap: normal; }
+
+input[type="number"]
+{
+  
+}
 
 button,
 [type="button"],
@@ -1980,16 +1985,16 @@ fieldset:disabled a.btn {
 
 .btn-success {
   color: #212529;
-  background-color: #19d895;
-  border-color: #19d895; }
+  background-color: #005fff;
+  border-color: #1949d8; }
   .btn-success:hover {
     color: #fff;
-    background-color: #15b67d;
-    border-color: #14aa75; }
+    background-color: #007bff;
+    border-color: #0177b4c9; }
   .btn-success:focus, .btn-success.focus {
     color: #fff;
-    background-color: #15b67d;
-    border-color: #14aa75;
+    background-color: #007bff;
+    border-color: #0177b4c9;
     box-shadow: 0 0 0 0.2rem rgba(26, 189, 133, 0.5); }
   .btn-success.disabled, .btn-success:disabled {
     color: #212529;
@@ -7984,8 +7989,8 @@ pre {
 .img-ss, .table td img:not(.thumb-image),
 .table th img:not(.thumb-image) {
   width: 35px;
-  min-width: 35px;
-  height: 35px; }
+  min-width: 60px;
+  height: 60px; }
 
 .img-curved {
   border-radius: 10px; }
@@ -8513,7 +8518,7 @@ pre {
     font-size: 0.875rem; }
   .btn.btn-xs {
     padding: 0.5rem 0.75rem;
-    font-size: 0.625rem; }
+    font-size: 0.75rem; }
   .btn.btn-transparent {
     background: transparent; }
   .btn.btn-danger, .btn.btn-info, .btn.btn-success, .btn.btn-teal, .btn.btn-warning {

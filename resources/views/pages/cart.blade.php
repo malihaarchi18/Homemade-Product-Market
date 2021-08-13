@@ -54,6 +54,7 @@
              
              @php
              $count=DB::table('carts')->where('user_id', Auth::id())->count();
+             $quantity=App\Cart::where('user_ip',request()->ip())->where('user_id',Auth::id())->sum('quantity');
              @endphp
              @if($count==0)
  
@@ -85,7 +86,7 @@
 	<h5>	{{ $loop->index+1}} </h5>
 	</td>
 	<td>
-		<h5>  <a href="{!! route('item.show',$cart->product->slug) !!}">{{ $cart->product->title}}</h5></a>
+		<h5>  <a href="{{route('item.show',[$cart->product->slug,$cart->product->id]) }}">{{ $cart->product->title}}</h5></a>
 	</td>
 	<td> 
 
@@ -97,7 +98,7 @@
 		<td>
 	<form action="{{ url('cart/update',$cart->id)}}" method="post">
 				@csrf
-		<input type="number" name="product_quantity" id="quantity" min="1" max="{{$cart->stock}}" value="{{ $cart->quantity}}"/><button type="submit" class="btn btn-success">Update</button></form>
+		<input type="number" name="product_quantity" id="quantity" min="1" max="{{$cart->product->quantity}}" value="{{ $cart->quantity}}"/><button type="submit" class="btn btn-success">Update</button></form>
 		
 
 	</td>
@@ -140,21 +141,41 @@
 									<div class="total">
 										<div class="sub">
 											<p style="font-size:17px"><span><b>Subtotal:</b></span> <span>{{ $total}} Taka</span></p>
+											@if($quantity<6)
 											<p style="font-size:17px"><span><b>Delivary Charge:</b></span> <span>50 Taka</span></p>
+											@elseif(5<$quantity && $quantity<11)
+											<p style="font-size:17px"><span><b>Delivary Charge:</b></span> <span>100 Taka</span></p>
+										    @else
+											<p style="font-size:17px"><span><b>Delivary Charge:</b></span> <span>200 Taka</span></p>
+											@endif
+
 											@if(Session::has('coupon'))
                                              <p style="font-size:17px"><span><b>Coupon:</b></span> <span>{{ session()->get('coupon')['coupon_name']}}   <a href="{{url('coupon/remove')}}">❌</a></span></p>
 											<p style="font-size:17px"><span><b>Discount:</b></span> <span>{{ session()->get('coupon')['discount']}} %</span></p>
 											
 											</div>
-										<div >
+										<div>
+										@if($quantity<6)
 											<p style="font-size:17px"><span><b>Total:</b></span> <span>{{ $total+50-$total*session()->get('coupon')['discount']/100}} Taka</span></p>
+                                          @elseif(5<$quantity && $quantity<11)
+											<p style="font-size:17px"><span><b>Total:</b></span> <span>{{ $total+100-$total*session()->get('coupon')['discount']/100}} Taka</span></p>
+                                            @else
+											<p style="font-size:17px"><span><b>Total:</b></span> <span>{{ $total+200-$total*session()->get('coupon')['discount']/100}} Taka</span></p>
+											@endif
 										</div>
 										
 											@else
 											<p style="font-size:17px"><span><b>Discount:</b></span> <span>0.00</span></p>
 										</div>
 										<div >
+										 @if($quantity<6)
 											<p style="font-size:17px"><span><b>Total:</b></span> <span>{{ $total+50}} Taka</span></p>
+                                          @elseif(5<$quantity && $quantity<11)
+											<p style="font-size:17px"><span><b>Total:</b></span> <span>{{ $total+100}} Taka</span></p>
+                                            @else
+											<p style="font-size:17px"><span><b>Total:</b></span> <span>{{ $total+200}} Taka</span></p>
+											@endif
+
 										</div>
 										@endif
 									</div>
@@ -166,9 +187,14 @@
 
 <div class="float-right">
 <a href="{{ route('products') }}" class="btn btn-info btn-lg"><b style="font-size:18px">Continue Shopping</b></a>
+@guest
+ @if (Route::has('register'))
+<a href="{{ route('login') }}" class="btn btn-info btn-lg"><b style="font-size:18px">Please login to checkout</b></a>
+ @endif
+ @else
 	<a href="{{ url('payment') }}" class="btn btn-info btn-lg"><b style="font-size:18px">Checkout</b></a>
 
-
+@endguest
 </div>
 
 

@@ -605,7 +605,10 @@
   width: calc(100% - 270px);
   min-height: calc(100vh - 63px);
   display: flex;
+ 
   flex-direction: column; }
+
+  
   @media (max-width: 991px) {
     .main-panel {
       margin-left: 0;

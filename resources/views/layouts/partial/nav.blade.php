@@ -7,26 +7,42 @@
     
                            
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}"><b>Sign in</b></a>
+                                    <a class="nav-link" href="{{ route('login') }}">
+                                     <b>Sign in</b></a>
+                                      
                                 </li>
                             @endif
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                              <b>      {{ Auth::user()->name }} </b><span class="caret"></span>
+                              <b>{{ Auth::user()->name }} </b><span class="caret"></span>
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+
+                                  <a class="dropdown-item" href="{{ route('myOrders') }}" > {{ __('My Orders') }} </a>
+                                  <hr>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+                                     
+                                    
+                                    </a>
+
+
+
+
+
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
                                 </div>
+
+
+
                             </li>
                         @endguest
 
@@ -85,21 +101,17 @@
              });
                      $quantity=App\Cart::where('user_ip',request()->ip())->where('user_id',Auth::id())->sum('quantity');
 
+                      $q=App\Wishlist::where('user_id',Auth::id())->where('user_ip',request()->ip())->sum('quantity');
+
+             
 
                @endphp
-               @guest
-                           @if (Route::has('register'))
-                          <li class="cart"><a href="#"><i class="icon-shopping-cart"></i> Cart()</a></li>
-               <li class="cart"><a href=""><i class="fa fa-heart" style="font-size: 17px"></i>
-              Wishlist</a></li>
-
-
-                           @endif
-                           @else
+               
+                           
               <li class="cart"><a href="{{ url('cart')}}"><i class="icon-shopping-cart"></i> Cart({{ $quantity}})</a></li>
-              <li class="cart"><a href=""><i class="fa fa-heart" style="font-size: 17px"></i>
-              Wishlist</a></li>
-                        @endguest
+              <li class="cart"><a href="{{route('page.wishlist')}}"><i class="fa fa-heart" style="font-size: 17px"></i>
+              Wishlist({{$q}})</a></li>
+                      
 
               
               

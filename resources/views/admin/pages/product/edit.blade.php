@@ -25,12 +25,13 @@
 
   <div class="form-group">
     <label for="exampleInputEmail1">Category Name</label>
-    <select class="form-control" name="category_name">
+    <select class="form-control" name="category_name"  value="{{ $product->category_name}}" selected >
       <option value="Art & Crafts">Art& Crafts</option>
       <option value="Clothing">Clothing</option>
       <option value="Food Items">Food Items</option>
       <option value="Gift and Jewellary">Gift & Jewellery</option>
-   <option value="Home & Living" selected>Home & Living</option>
+   <option value="Home & Living">Home & Living</option>
+
     </select>
   </div>
 
@@ -44,6 +45,7 @@
     <label for="exampleInputEmail1">Price</label>
     <input type="number" class="form-control"name="prize" id="exampleInputEmail1"  value="{{ $product->prize }}">
   </div>
+ 
   <div class="form-group">
     <label for="exampleInputEmail1">Quantity</label>
     <input type="number" class="form-control"name="quantity" id="exampleInputEmail1"  value="{{ $product->quantity }}">

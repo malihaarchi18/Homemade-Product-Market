@@ -1,14 +1,27 @@
 @extends('admin.layouts.master')
 @section('content')
 
-
-
+ @php
+    $s=0;
+     foreach($details as $d)
+   $s=$s+$d->product->prize*$d->quantity
+   @endphp
 
 <div class="main-panel">
           <div class="content-wrapper">
 
             <div class="card">
               <div class="card-header">
+
+                  @if(session('msg'))
+            <div class="alert alert-success" role="alert">
+            {{ session('msg') }}
+
+            </div>
+
+             @endif
+
+            
 
           
              <b>   View Orders </b>
@@ -24,11 +37,16 @@
 
                   </div>
                   <div class="col-md-6">
-                <p><strong>Total Amount: </strong> {{ $order->amount }}</p>
+                <!--<p><strong>Total: </strong> {{$s}} Taka </p>
+                <p><strong>Coupon Discount: </strong> {{(($s-($order->amount - 50))*100)/$s}} %</p> -->
+                <p><strong> Amount:</strong> {{$order->amount-$order->delivery}}</p>
+                <p><strong> Delivery Charge:</strong> {{$order->delivery}}</p>
+                 <p><strong> Total Amount:</strong> {{$order->amount}}</p>
                 <p><strong>Transaction ID: </strong> {{ $order->transaction_id }}</p>
                </div>
              </div>
              <hr>
+             
              <h3>Ordered Items</h3>
            
              <table class="table table-bordered table-stripe">
@@ -36,60 +54,77 @@
     <tr>
       <th>No.</th>
       <th>Product Title</th>
-      <th>Product Image</th>
-      <th>Price</th>
-      <th>Quantity</th>
-      <th>Total</th>
-      <th>
-        Remove
-      </th>
+       <th>Product Image</th>
+        <th>Product Quantity</th>
+         <th>Discount(%)</th>
+         <th>Unit Price</th>
+          <th>SubTotal</th>
+
+     
+    
     </tr>
   </thead>
   <tbody>
-    
    
-    @foreach($carts as $cart)
+    @foreach($details as $d)
+   
 <tr>
   <td>
   <h5>  {{ $loop->index+1}} </h5>
   </td>
   <td>
-    <h5>  <a href="{!! route('item.show',$cart->product->slug) !!}">{{ $cart->product->title}}</h5></a>
+    <h5>  <a href="{{ route('item.show',[$d->product->slug,$d->product->id]) }}">{{ $d->product->title}}</h5></a>
   </td>
   <td> 
-    <img src="{{ asset('public/img/products/'. $cart->product->images->first()->image)}}" width="100px" height="70px">
+
+<img src="{{ asset('public/img/products/'. $d->product->images->first()->image)}}" width="100px" height="70px">
   </td>
   <td>
-    <h5>{{ $cart->price }}</h5>
-  </td>
-    <td>
-  <form action="{{ url('cart/update',$cart->id)}}" method="post">
-        @csrf
-    <input type="number" name="product_quantity" id="quantity" min="1" max="{{$cart->stock}}" value="{{ $cart->quantity}}"/><button type="submit" class="btn btn-success">Update</button></form>
-    
-
-  </td>
-    <td>
-    <h5>  {{$cart->price*$cart->quantity}} </h5>
-
+    <h5>{{ $d->quantity}}</h5>
   </td>
   <td>
-  <a href="{{ url('cart/remove',$cart->id)}}"> <span style='font-size:20px;'>&#10006;</span></a>
+    <h5>{{ $d->sale}}</h5>
   </td>
+  <td>
+    <h5>{{ $d->price}}</h5>
+  </td>
+   <td>
+    <h5>{{ $d->price*$d->quantity}}</h5>
+  </td>
+  
+  
 </tr>
 @endforeach
 
   </tbody>
+
 </table>
+<br>
 
+<form action="{{ route('admin.order.confirm',$order->id)}}" method="post">
+  @csrf
+<div class="form-group">
+    <h5><b>Update Order Status</b></h5>
+  
 
+  <select class="form-control " name="status">
+    <option value="Picked By Courier">Picked By Courier</option> 
+      <option value="On The Way">On The Way</option>
+        <option value="Cancelled">Cancelled</option>
+      
+      
+     
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary btn-sm">Save</button>
+</form>
 
+</div>
+</div>
+</div>
 
-                
             
-            </div>
-            </div>
-        </div>
-        </div>
+        
+        
 
         @endsection

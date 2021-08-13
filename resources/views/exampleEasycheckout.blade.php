@@ -20,17 +20,45 @@
     </div>
 
 
+@php
+$d=0;
+$quantity=App\Cart::where('user_ip',request()->ip())->where('user_id',Auth::id())->sum('quantity');
+ if($quantity<6)
+       $d= 50;
+       elseif(5<$quantity && $quantity<11)
+       $d=100;
+       else
+       $d=200;
 
+
+
+@endphp
 
         @php
-        $a=0;
+        $a=0 ;
+  $quantity=App\Cart::where('user_ip',request()->ip())->where('user_id',Auth::id())->sum('quantity');
         if(Session::has('coupon'))
+        {
+        if($quantity<6)
        $a= $total+50-$total*session()->get('coupon')['discount']/100 ;
-       else
+       elseif(5<$quantity && $quantity<11)
+        $a= $total+100-$total*session()->get('coupon')['discount']/100 ;
+         else
+        $a= $total+200-$total*session()->get('coupon')['discount']/100 ;
+      }
+       else{
+       if($quantity<6)
        $a= $total+50;
+       elseif(5<$quantity && $quantity<11)
+       $a=$total+100;
+       else
+       $a=$total+200;
+
+
+
+   }
        @endphp
 
-    
 
 
     <div class="row">
@@ -54,7 +82,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">+88</span>
                         </div>
-                        <input type="text" name="customer_mobile" class="form-control" id="mobile" placeholder="Mobile"
+                        <input type="text" name="customer_mobile" class="form-control" id="mobile" placeholder="Mobile" autocomplete="off" 
                                value="" required>
                         <div class="invalid-feedback" style="width: 100%;">
                             Your Mobile number is required.
@@ -74,7 +102,7 @@
                 <div class="mb-3">
                     <label for="address">Address</label>
                     <input type="text" class="form-control" id="address" placeholder="Address"
-                           value="" required>
+                           value="" autocomplete="off" required>
                     <div class="invalid-feedback">
                         Please enter your shipping address.
                     </div>
@@ -118,6 +146,8 @@
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="same-address">
                     <input type="hidden"  value="{{$a}}" name="amount" id="total_amount" required/>
+                    <input type="hidden"  value="{{$d}}" name="delivery" id="delivery_charge" required/>
+                
                     <label class="custom-control-label" for="same-address">Shipping address is the same as my billing
                         address</label>
                 </div>
@@ -155,6 +185,16 @@
     obj.cus_email = $('#email').val();
     obj.cus_addr1 = $('#address').val();
     obj.amount = $('#total_amount').val();
+    obj.delivery = $('#delivery_charge').val();
+    
+     $("#customer_name").change(function(){
+        obj.cus_name = $('#customer_name').val();
+    });
+
+
+     $("#email").change(function(){
+        obj.cus_email = $('#email').val();
+    });
 
     $("#mobile").change(function(){
         obj.cus_phone = $('#mobile').val();

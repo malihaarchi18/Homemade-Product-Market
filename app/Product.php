@@ -11,5 +11,7 @@ class Product extends Model
     	return $this->hasmany('App\ProductImage');
     }
 
+    
+
   
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSeenByAdminToOrdersTable extends Migration
+class AddUserIdToOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddSeenByAdminToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-        $table->string('seen_by_admin')->after('currency');
+            $table->integer('user_id')->after('name');
         });
     }
 
@@ -26,7 +26,8 @@ class AddSeenByAdminToOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('seen_by_admin');
+            //
+            $table->dropColumn('user_id');
         });
     }
 }
